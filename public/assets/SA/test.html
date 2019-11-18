@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- CSS -->
+	<link rel="stylesheet" href="ubay.css">
+	<link rel="stylesheet" href="../mdi/css/mdi.css">
+
+	<!-- JS -->
+	<script src="../BS/js/jquery.js"></script>
+	<script src="sweetalert-dev.js"></script>
+</head>
+<body>
+
+	<button type="button" id="btn1">
+		test 1
+	</button>
+	
+<script>
+	$("#btn1").click(function(){
+		swal({
+			title:'',
+			text:'maaf username/password salah',
+			type:'success',
+			showConfirmButton: true,
+  			showCancelButton: true,
+			confirmButtonColor: '#1F79CD',
+			cancelButtonText: 'cancel',
+		});
+	});
+</script>
+
+<!-- sweet alert button color -->
+<!-- 
+	error = #E23131,
+	warning = #EFD211,
+	info = #23B9DE,
+	sukses = #1F79CD
+ -->
+</body>
+</html>
