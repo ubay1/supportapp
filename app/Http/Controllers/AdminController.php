@@ -38,11 +38,12 @@ class AdminController extends Controller
     public function store(Request $request)
     {
 
-        $user   =  new Admin();
+        $user   =  new TeknikalSupport();
         $user->id = $request->user_id;
         $user->nama = $request->nama;
         $user->email = $request->email;
         $user->password = $request->password;
+        $user->status = "none";
         $user->created_at = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $user->updated_at = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $user->save();

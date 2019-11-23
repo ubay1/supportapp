@@ -53,7 +53,7 @@
             <div>{{Session::get('alert-sukses')}}</div>
         </div>
         @endif
-
+        {{Session::get('id')}}
         <a href="javascript:void(0)" style="position:relative; top:10px; border-radius:10px;" class="btn btn-info ml-3"
             id="create-new-user">Add New</a><br><br>
 
@@ -63,10 +63,8 @@
                 <tr>
                     <th>ID</th>
                     <th>No</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                    <th>Status</th>
+                    <th>Nama Projet</th>
+                    <th>Nama Teknikal Support</th>
                     <th>Created_at</th>
                     <th>Update_at</th>
                     <th>Action</th>
@@ -76,6 +74,8 @@
     </div>
 
 </section>
+
+
 
 <div class="modal fade" id="ajax-crud-modal" aria-hidden="true">
     <div class="modal-dialog">
@@ -87,28 +87,21 @@
                 <form id="userForm" name="userForm" class="form-horizontal">
                     <input type="hidden" name="user_id" id="user_id">
                     <div class="form-group">
-                        <label for="name" class="col-sm-2 control-label">Name</label>
-                        <div class="col-sm-12">
-                            <input type="text" class="form-control" id="name" name="nama" placeholder="Enter Name"
-                                value="" maxlength="50" required="">
-                        </div>
-                    </div>
-
-                    {{-- <div ></div> --}}
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Email</label>
+                        <label for="name" class="col-sm-12 control-label">Nama Project</label>
                         <span id="status"></span>
                         <div class="col-sm-12">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email"
-                                value="" required="">
-                        </div>
-                    </div>
+                            <input type="text" class="form-control" id="name" name="nama_project" placeholder="Enter Name"
+                                value="" maxlength="50" required="">
+                        </div> <br>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" id="label-password">Password</label>
+                        <label for="name" class="col-sm-12 control-label">Pilih Teknikal Support</label>
                         <div class="col-sm-12">
-                            <input type="password" minlength="6" class="form-control" id="password" name="password"
-                                placeholder="Enter password" value="" required="">
+                                <select name="tek_support_id" id="tek_support_id" class="form-control">
+                                    <option selected> -- Select One --</option>
+                                    @foreach ($t_support as $t_supports)
+                                        <option value="{{ $t_supports->id }}">{{ $t_supports->nama }}</option>
+                                    @endforeach
+                                </select>
                         </div>
                     </div>
 
@@ -140,28 +133,17 @@
                         <div class="col-sm-12">
                             <input type="text" class="form-control" id="name2" name="nama2" placeholder="Enter Name"
                                 value="" maxlength="50" required="">
-                        </div>
-                    </div>
+                        </div> <br>
 
-                    {{-- <div ></div> --}}
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Email</label>
-                        <span id="status"></span>
+                        <label for="name" class="col-sm-12 control-label">Pilih Teknikal Support</label>
                         <div class="col-sm-12">
-                            <input type="email" class="form-control" id="email2" name="email2" placeholder="Enter Email"
-                                value="" required="">
+                            <select name="tek_support_id" id="tek_support_id" class="form-control">
+                                    @foreach ($t_support as $t_supports)
+                                        <option value="{{ $t_supports->id }}">{{ $t_supports->nama }}</option>
+                                    @endforeach
+                            </select>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" id="label-password">Password</label>
-                        <div class="col-sm-12">
-                            <input type="password" minlength="6" class="form-control" id="password2" name="password2"
-                                placeholder="Enter password" value="" required="">
-                        </div>
-                    </div>
-
-                    <input type="hidden" value="none" name="status" id="status">
 
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary" id="btn-save2" value="create">Save changes
@@ -190,10 +172,11 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "kelolaTS",
+                url: "kelolaProject",
                 type: 'GET',
             },
-            columns: [{
+            columns: [
+                {
                     data: 'id',
                     name: 'id',
                     'visible': false
@@ -205,20 +188,12 @@
                     searchable: false
                 },
                 {
-                    data: 'nama',
-                    name: 'nama'
+                    data: 'nama_project',
+                    name: 'nama_project'
                 },
                 {
-                    data: 'email',
-                    name: 'email'
-                },
-                {
-                    data: 'password',
-                    name: 'password'
-                },
-                {
-                    data: 'status',
-                    name: 'status'
+                    data: 'tek_support.nama',
+                    name: 'teknikal_support'
                 },
                 {
                     data: 'created_at',
@@ -241,27 +216,27 @@
 
 
         //   cek email
-        $("#email").bind("keyup change", function () {
+        $("#name").bind("keyup change", function () {
 
-            var email = $(this).val();
+            var nama_project = $(this).val();
 
             $.ajax({
-                url: apiurl+'admin/cekEmail',
+                url: apiurl+'admin/ceknamaproject',
                 type: "POST",
                 data: {
                     send: true,
-                    email: email
+                    nama_project: nama_project
                 },
                 success: function (data) {
                     $("#status").html(data.message);
 
                     if (data.statuscode == 0) {
                         $("#status").css('color', 'red');
-                        $("#email").css('borderColor', 'red');
+                        $("#name").css('borderColor', 'red');
                         $("#btn-save").css('display', 'none');
                     } else {
                         $("#status").css('color', 'green');
-                        $("#email").css('borderColor', 'green');
+                        $("#name").css('borderColor', 'green');
                         $("#btn-save").css('display', 'block');
                     }
                 }
@@ -274,23 +249,23 @@
             $('#btn-save').val("create-user");
             $('#user_id').val('');
             $('#userForm').trigger("reset");
-            $('#userCrudModal').html("Add New User");
+            $('#userCrudModal').html("Add New Project");
             $('#ajax-crud-modal').modal('show');
         });
 
         /* When click edit user */
         $('body').on('click', '.edit-user', function () {
             var user_id = $(this).data('id');
-            $.get('kelolaTS/' + user_id + '/edit', function (data) {
+            $.get('kelolaProject/' + user_id + '/edit', function (data) {
                 $('#name-error').hide();
                 $('#email-error').hide();
-                $('#userCrudeditModal').html("Edit User");
+                $('#userCrudeditModal').html("Edit Project");
                 $('#btn-save2').val("edit-user");
                 $('#ajax-crudedit-modal').modal('show');
                 $('#user_id2').val(data.id);
-                $('#name2').val(data.nama);
-                $('#email2').val(data.email);
-                $('#password2').val(data.password);
+                $('#name2').val(data.nama_project);
+                $('#tek_support_id option[value="'+data.tek_support.id+'"]').prop('selected', true);
+                $('#tek_support').html(data.tek_support.nama);
             })
         });
 
@@ -299,12 +274,12 @@
 
             var user_id = $(this).data("id");
             if(!confirm("Anda serius ingin hapus ? data yang telah dihapus tidak bisa dikembalikan !")){
-                return false
-            };
+                return false;
+            }
 
             $.ajax({
                 type: "get",
-                url: apiurl+"admin/hapusdataTS/" + user_id,
+                url: apiurl+"admin/hapusdataProject/" + user_id,
                 success: function (data) {
                     var oTable = $('#user-table').dataTable();
                     oTable.fnDraw(false);
@@ -326,7 +301,7 @@
 
                 $.ajax({
                     data: $('#userForm').serialize(),
-                    url: apiurl+"admin/tambahTS",
+                    url: apiurl+"admin/tambahProject",
                     type: "POST",
                     dataType: 'json',
                     success: function (data) {
@@ -357,7 +332,7 @@
 
                 $.ajax({
                     data: $('#userForm2').serialize(),
-                    url: apiurl+"admin/updatedataTS",
+                    url: apiurl+"admin/updatedataProject",
                     type: "POST",
                     dataType: 'json',
                     success: function (data) {

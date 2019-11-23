@@ -75,6 +75,8 @@
 
 </section>
 
+{{Session::get('id')}}
+
 <div class="modal fade" id="ajax-crud-modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

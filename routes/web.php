@@ -14,6 +14,10 @@ Route::resource('admin/kelolaTS', 'AdminController');
 Route::resource('admin/kelolaTeknisi', 'TeknisiController');
 // kelola Project
 Route::resource('admin/kelolaProject', 'ProjectController');
+
+// kelola Project
+Route::get('admin/teknikalProject', 'ProjectController@teknikalProject');
+
 Route::get('admin/getTS', 'ProjectController@getTS');
 // end kelola Project
 

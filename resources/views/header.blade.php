@@ -64,7 +64,7 @@
         @endif
         @if(\Session::get('jabatan') != 'superadmin')
             <a href="{{ url('admin/kelolaTeknisi') }}"><span class="mdi mdi-account-multiple-plus mdi-24px icon_listmenu"></span> Kelola Teknisi </a>
-            <a href="{{ url('admin/kelolaProject') }}"><span class="mdi mdi-checkbox-multiple-marked-circle mdi-24px icon_listmenu"></span> Kelola Project </a>
+            <a href="{{ url('admin/teknikalProject') }}"><span class="mdi mdi-checkbox-multiple-marked-circle mdi-24px icon_listmenu"></span> Project </a>
             <a href="{{ url('admin/kelolaMasalah') }}"><span class="mdi mdi-comment-check mdi-24px icon_listmenu"></span> Kelola Masalah Project </a>
         @endif
 

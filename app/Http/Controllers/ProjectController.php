@@ -13,11 +13,6 @@ use Redirect,Response;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         if(request()->ajax()) {
@@ -32,11 +27,17 @@ class ProjectController extends Controller
         return view('kelola_project/index', ['t_support'=>$t_support]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function teknikalProject(){
+        $t_support = Project::with(['tek_support'=>function($q){
+            $q->where('id',Session::get('id'));
+        }])->get();
+
+        // if ($t_support[0]->tek_support == null) {
+        //     return view('project_teknikal/index');
+        // }
+        return view('project_teknikal/index', ['t_support'=>$t_support]);
+    }
+
     public function create()
     {
         //
