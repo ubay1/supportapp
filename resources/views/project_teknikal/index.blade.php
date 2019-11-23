@@ -2,7 +2,7 @@
 @section('content')
 <!-- Main Section -->
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/view_admin.css') }} ">
-<link href="https://fonts.googleapis.com/css?family=Blinker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Hind+Guntur&display=swap" rel="stylesheet">
 
 {{-- data table --}}
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css" />
@@ -45,6 +45,22 @@
             margin-bottom: 50px;
         }
 
+        .img-on{
+            box-shadow: 0px 4px 6px grey;
+            border-radius: 100%;
+        }
+
+        .card-body{
+            background: #c7c7c7;
+            box-shadow: 0px 2px 4px grey;
+        }
+
+        .card-title{
+            font-weight: bolder;
+            color: white;
+            text-shadow: 0px 2px 0px slategrey;
+        }
+
     </style>
 
     <div id="content">
@@ -53,31 +69,39 @@
             <div>{{Session::get('alert-sukses')}}</div>
         </div>
         @endif
-        {{Session::get('id')}}
-        <a href="javascript:void(0)" style="position:relative; top:10px; border-radius:10px;" class="btn btn-info ml-3"
-            id="create-new-user">Add New</a><br><br>
 
-        {{-- data table --}}
-        <table id="user-table" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>No</th>
-                    <th>Nama Projet</th>
-                    <th>Nama Teknikal Support</th>
-                    <th>Created_at</th>
-                    <th>Update_at</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-        </table>
+        <div id="dataproject">
+            @foreach ($tmpsupport as $tmp)
+                @if ($tmp->tek_support == null)
+                    <div class="text-center">
+                        <img src="{{ asset('assets/img/oops.png') }}" alt="" width="300">
+                        <h4>Belum ada Project</h4>
+                    </div>
+                @else
+                <div class="card" style="width: 18rem; margin:auto;">
+                    <div class="text-center">
+                        <div class="card-body">
+                            <h2 class="card-title title-teknikalproject">{{$tmp->nama_project}}</h2>
+                            @if ($tmp->status == 'idle')
+                                <img src="{{ asset('assets/img/on.png') }}" class="img-on" alt="" width="100">
+                            @else
+                                <img src="{{ asset('assets/img/off.png') }}" class="img-on" alt="" width="100">
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endif
+            @endforeach
+        </div>
+
+        <div id="tesapi"></div>
     </div>
 
 </section>
 
 
 
-<div class="modal fade" id="ajax-crud-modal" aria-hidden="true">
+{{-- <div class="modal fade" id="ajax-crud-modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -116,10 +140,10 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 {{-- modal edit --}}
-<div class="modal fade" id="ajax-crudedit-modal" aria-hidden="true">
+{{-- <div class="modal fade" id="ajax-crudedit-modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -156,140 +180,12 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <script>
     // var SITEURL = '{{URL::to('')}}';
     var apiurl = "{{env('API_URL')}}";
     console.log(apiurl);
-    $(document).ready(function () {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $('#user-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "kelolaProject",
-                type: 'GET',
-            },
-            columns: [
-                {
-                    data: 'id',
-                    name: 'id',
-                    'visible': false
-                },
-                {
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'nama_project',
-                    name: 'nama_project'
-                },
-                {
-                    data: 'tek_support.nama',
-                    name: 'teknikal_support'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
-                {
-                    data: 'updated_at',
-                    name: 'updated_at'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                },
-            ],
-            order: [
-                [0, 'desc']
-            ]
-        });
-
-
-        //   cek email
-        $("#name").bind("keyup change", function () {
-
-            var nama_project = $(this).val();
-
-            $.ajax({
-                url: apiurl+'admin/ceknamaproject',
-                type: "POST",
-                data: {
-                    send: true,
-                    nama_project: nama_project
-                },
-                success: function (data) {
-                    $("#status").html(data.message);
-
-                    if (data.statuscode == 0) {
-                        $("#status").css('color', 'red');
-                        $("#name").css('borderColor', 'red');
-                        $("#btn-save").css('display', 'none');
-                    } else {
-                        $("#status").css('color', 'green');
-                        $("#name").css('borderColor', 'green');
-                        $("#btn-save").css('display', 'block');
-                    }
-                }
-            });
-
-        });
-
-        /*  When user click add user button */
-        $('#create-new-user').click(function () {
-            $('#btn-save').val("create-user");
-            $('#user_id').val('');
-            $('#userForm').trigger("reset");
-            $('#userCrudModal').html("Add New Project");
-            $('#ajax-crud-modal').modal('show');
-        });
-
-        /* When click edit user */
-        $('body').on('click', '.edit-user', function () {
-            var user_id = $(this).data('id');
-            $.get('kelolaProject/' + user_id + '/edit', function (data) {
-                $('#name-error').hide();
-                $('#email-error').hide();
-                $('#userCrudeditModal').html("Edit Project");
-                $('#btn-save2').val("edit-user");
-                $('#ajax-crudedit-modal').modal('show');
-                $('#user_id2').val(data.id);
-                $('#name2').val(data.nama_project);
-                $('#tek_support_id option[value="'+data.tek_support.id+'"]').prop('selected', true);
-                $('#tek_support').html(data.tek_support.nama);
-            })
-        });
-
-
-        $('body').on('click', '#delete-user', function () {
-
-            var user_id = $(this).data("id");
-            if(!confirm("Anda serius ingin hapus ? data yang telah dihapus tidak bisa dikembalikan !")){
-                return false;
-            }
-
-            $.ajax({
-                type: "get",
-                url: apiurl+"admin/hapusdataProject/" + user_id,
-                success: function (data) {
-                    var oTable = $('#user-table').dataTable();
-                    oTable.fnDraw(false);
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
-        });
-    });
 
     if ($("#userForm").length > 0) {
         $("#userForm").validate({

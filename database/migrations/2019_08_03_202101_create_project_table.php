@@ -12,6 +12,7 @@ class CreateProjectTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('tek_support_id')->unsigned();
             $table->string("nama_project");
+            $table->string("status");
             $table->timestamps();
         });
     }

@@ -34,6 +34,11 @@
 
 </head>
 
+<style>
+
+
+</style>
+
 <body>
 
 <div class="maincontainer">
@@ -52,10 +57,9 @@
     <div id="drawer">
         <div id="bg-img-drawer">
             <img src="{{ asset('assets/img/bgdrawer.png') }}" alt="" id="img-drawer">
-            <div class="bg-fotouser">
-                <img src="{{ asset('assets/img/team1.jpg') }}" alt="" id="fotouser">
+            <div class="bg-nama-user">
+                <span id="txt_nama">{{Session::get('nama')}}</span>
             </div>
-            <span id="txt_nama">{{Session::get('jabatan')}},  ({{Session::get('nama')}})</span>
         </div>
 
         @if(\Session::get('jabatan') == 'superadmin')

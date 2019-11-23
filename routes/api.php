@@ -48,6 +48,10 @@ Route::prefix('admin')->group(function(){
     Route::post('updatedataProject', 'ProjectController@updatedata');
     Route::get('hapusdataProject/{id}', 'ProjectController@destroy');
 
+    // teknikal support get project
+    Route::get('api_teknikalProject', 'ProjectController@api_teknikalProject');
+    Route::get('api_teknikalProjectId/{id}', 'ProjectController@teknikalProjectId');
+
     // get all project for masalah
     Route::get('getAllProject','CountController@getAllProject');
     Route::get('getAllMasalah','CountController@getAllMasalah');
@@ -58,4 +62,5 @@ Route::prefix('admin')->group(function(){
     Route::post('tambahMasalah', 'MasalahController@store');
     Route::post('updatedataMasalah', 'MasalahController@updatedata');
     Route::get('hapusdataMasalah/{id}', 'MasalahController@hapusMasalah');
+    Route::get('getMasalah/{id}', 'MasalahController@getMasalah');
 });

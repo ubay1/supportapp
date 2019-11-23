@@ -7,6 +7,7 @@ use App\Masalah;
 use App\Project;
 use App\TeknikalSupport;
 use App\Teknisi;
+use Illuminate\Support\Facades\Session;
 
 class CountController extends Controller
 {

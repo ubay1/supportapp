@@ -162,7 +162,6 @@ class UserController extends Controller
                         Session::put('id',$admin->id);
                         Session::put('nama',$admin->nama);
                         Session::put('email',$admin->email);
-                        Session::put('jabatan','admin');
                         Session::put('login',TRUE);
                         return redirect('admin');
                         // return response()->json([

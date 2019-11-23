@@ -18,11 +18,12 @@ Route::resource('admin/kelolaProject', 'ProjectController');
 // kelola Project
 Route::get('admin/teknikalProject', 'ProjectController@teknikalProject');
 
+// kelola MasalahProject
+Route::resource('admin/kelolaMasalah', 'MasalahController');
+
 Route::get('admin/getTS', 'ProjectController@getTS');
 // end kelola Project
 
-// kelola MasalahProject
-Route::resource('admin/kelolaMasalah', 'MasalahController');
 
 // Route::get('/kelolaAdmin/{any}', 'SinglePageController@index')->where('any', '.*');
 

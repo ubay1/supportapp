@@ -2,12 +2,13 @@
 @section('content')
 <!-- Main Section -->
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/view_admin.css') }} ">
-<link href="https://fonts.googleapis.com/css?family=Blinker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Hind+Guntur&display=swap" rel="stylesheet">
 
 {{-- data table --}}
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css" />
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <section class="main-section">
     <style>
@@ -55,7 +56,7 @@
         @endif
 
         <a href="javascript:void(0)" style="position:relative; top:10px; border-radius:10px;" class="btn btn-info ml-3"
-            id="create-new-user">Add New</a><br><br>
+            id="create-new-project">Add New</a><br><br>
 
         {{-- data table --}}
         <table id="user-table" class="display" style="width:100%">
@@ -65,6 +66,7 @@
                     <th>No</th>
                     <th>Nama Projet</th>
                     <th>Nama Teknikal Support</th>
+                    <th>Status</th>
                     <th>Created_at</th>
                     <th>Update_at</th>
                     <th>Action</th>
@@ -74,8 +76,6 @@
     </div>
 
 </section>
-
-{{Session::get('id')}}
 
 <div class="modal fade" id="ajax-crud-modal" aria-hidden="true">
     <div class="modal-dialog">
@@ -137,7 +137,7 @@
 
                         <label for="name" class="col-sm-12 control-label">Pilih Teknikal Support</label>
                         <div class="col-sm-12">
-                            <select name="tek_support_id" id="tek_support_id" class="form-control">
+                            <select name="tek_support_id2" id="tek_support_id2" class="form-control">
                                     @foreach ($t_support as $t_supports)
                                         <option value="{{ $t_supports->id }}">{{ $t_supports->nama }}</option>
                                     @endforeach
@@ -196,6 +196,10 @@
                     name: 'teknikal_support'
                 },
                 {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
                     data: 'created_at',
                     name: 'created_at'
                 },
@@ -245,7 +249,7 @@
         });
 
         /*  When user click add user button */
-        $('#create-new-user').click(function () {
+        $('#create-new-project').click(function () {
             $('#btn-save').val("create-user");
             $('#user_id').val('');
             $('#userForm').trigger("reset");
@@ -256,6 +260,7 @@
         /* When click edit user */
         $('body').on('click', '.edit-user', function () {
             var user_id = $(this).data('id');
+            console.log(user_id);
             $.get('kelolaProject/' + user_id + '/edit', function (data) {
                 $('#name-error').hide();
                 $('#email-error').hide();
@@ -264,7 +269,7 @@
                 $('#ajax-crudedit-modal').modal('show');
                 $('#user_id2').val(data.id);
                 $('#name2').val(data.nama_project);
-                $('#tek_support_id option[value="'+data.tek_support.id+'"]').prop('selected', true);
+                $('#tek_support_id2 option[value="'+data.tek_support.id+'"]').prop('selected', true);
                 $('#tek_support').html(data.tek_support.nama);
             })
         });

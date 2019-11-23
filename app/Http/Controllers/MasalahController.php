@@ -18,42 +18,27 @@ class MasalahController extends Controller
 {
     public function index()
     {
-        // $masalah = Masalah::with('projects')->get();
-        // return $masalah;
+        $t_support = Project::with(['tek_support'=>function($q){
+            $q->where('id',Session::get('id'));
+        }])->where('tek_Support_id', Session::get('id'))->get();
+        // return $t_support[0];
 
-        if(request()->ajax()) {
-            $masalah = Masalah::with(['project'=>function($q){
-                $q->select('id','nama_project');
-            }])->get();
-            return Datatables::of($masalah)
-            ->addColumn('picture', function($masalah){
-                $url=asset("uploads/".$masalah->picture);
-                return '<img src="'.$url.'" border="0" width="100" class="img-rounded" align="center" />';
-            })
-            ->addColumn('action', 'kelola_masalah_project/action_button')
-            ->rawColumns(['picture','action'])
-            ->addIndexColumn()
-            ->make(true);
-        }
-        return view('kelola_masalah_project/index');
+        return view('kelola_masalah_project/index')->with('tmpsupport', $t_support);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function getMasalah($id){
+        $t_support = Masalah::with(['project'=>function($q){
+            $q->with('tek_support');
+        }])->where('tek_Support_id', $id)->get();
+
+        return $t_support;
+    }
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $pesan = [
@@ -65,7 +50,8 @@ class MasalahController extends Controller
             'project_id'=>'required',
             'masalah'=>'required',
             'solusi'=>'required',
-            'picture'=>'required'
+            'picture'=>'required',
+            'tek_support_id' => 'required'
           ], $pesan);
 
           // cek error tiap" request
@@ -111,8 +97,20 @@ class MasalahController extends Controller
                   'value'          => null,
                 ]
               ]);
-            }
+            } elseif ($validator->errors()->first('tek_support_id')) {
+                return response()->json([
+                  'data'=>[
+                    'success'       => false,
+                    'status_code'    => 4002,
+                    'message'       => $validator->errors()->first('tek_support_id'),
+                    'error'         => $validator->errors()->first('tek_support_id'),
+                    'value'          => null,
+                  ]
+                ]);
+              }
           }
+
+        //   return $request->input('project_id') ." ".$request->input('tek_support_id');
 
           $masalah_baru = new Masalah();
           $masalah_baru->project_id = $request->input('project_id');
@@ -122,11 +120,12 @@ class MasalahController extends Controller
                 $file = $request->file('picture');
                 $ext = $file->getClientOriginalExtension();
                 $newName = rand(100000,1001238912).md5($file->getClientOriginalName()).'.'.$ext;
-                $file->move('uploads',$newName);
+                $file->move('uploads/masalah/',$newName);
         //   $masalah_baru->picture = Config('app.url').'uploads/'.$newName;
-            $masalah_baru->picture = $newName;
+          $masalah_baru->picture = $newName;
           $masalah_baru->created_at = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
           $masalah_baru->updated_at = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+          $masalah_baru->tek_support_id = $request->input('tek_support_id');
           $masalah_baru->save();
 
           return response()->json([
@@ -140,22 +139,15 @@ class MasalahController extends Controller
           ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        $user   = new Masalah();
-        $user->id = $request->user_id;
-        $user->nama_project = $request->nama_project;
-        $user->created_at = Carbon::now('Asia/Jakarta');
-        $user->updated_at = Carbon::now('Asia/Jakarta');
-        $user->save();
+        $where = array('id' => $id);
+        $user  = Masalah::with('project')->where($where)->first();
 
         return Response::json($user);
+        // $t_support = Project::with(['tek_support', 'masalah'])->where('tek_support_id', $id)->get();
+
+        // return Response::json($t_support);
     }
 
     public function updatedata(Request $request)
@@ -247,12 +239,6 @@ class MasalahController extends Controller
         return response($res);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $where = array('id' => $id);
@@ -261,24 +247,11 @@ class MasalahController extends Controller
         return Response::json($user);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
 

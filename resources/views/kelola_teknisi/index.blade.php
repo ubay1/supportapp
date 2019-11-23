@@ -2,7 +2,7 @@
 @section('content')
 <!-- Main Section -->
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/view_admin.css') }} ">
-<link href="https://fonts.googleapis.com/css?family=Blinker&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Hind+Guntur&display=swap" rel="stylesheet">
 
 {{-- data table --}}
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css" />
