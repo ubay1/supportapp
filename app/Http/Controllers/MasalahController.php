@@ -29,7 +29,7 @@ class MasalahController extends Controller
     public function getMasalah($id){
         $t_support = Masalah::with(['project'=>function($q){
             $q->with('tek_support');
-        }])->where('tek_Support_id', $id)->get();
+        }])->where('tek_Support_id', $id)->orderBy('id','DESC')->get();
 
         return $t_support;
     }
@@ -174,11 +174,11 @@ class MasalahController extends Controller
             ->where('id','=', $request->id_masalah)
             ->first();
 
-            Storage::delete('uploads/'.$data2->picture);
+            File::delete('uploads/masalah/'.$data2->picture);
 
             $ext = $images->getClientOriginalExtension();
             $image_name = rand(100000,1001238912).md5($images->getClientOriginalName()).'.'.$ext;
-            $images->move('uploads',$image_name);
+            $images->move('uploads/masalah/',$image_name);
 
             $form_data = array(
                 'masalah' => $request->isi_masalah,
@@ -221,22 +221,17 @@ class MasalahController extends Controller
     }
 
     public function hapusMasalah($id){
-        $data2 = DB::table('masalah')
-        ->where('id','=', $id)
-        ->first();
+        $data2 = Masalah::find($id)->first();
 
-        Storage::delete('uploads/'.$data2->picture);
+        File::delete('uploads/masalah/'.$data2->picture);
 
-        // $jabatan = Session::get('jabatan');
-        $data2 = DB::table('masalah')
-        ->where('id','=', $id)
-        ->delete();
+        $data2 = Masalah::find($id)->delete();
 
-        $res['data']= array(
-            'message'=>'success delete'
-        );
-
-        return response($res);
+        return response()->json([
+            'message'=>'success delete',
+            'success'=>true,
+            'statuscode'=>200
+        ]);
     }
 
     public function edit($id)

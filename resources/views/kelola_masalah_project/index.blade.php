@@ -78,6 +78,10 @@
             object-fit: cover;
         }
 
+        .btn-action{
+            border-radius: 0px;
+        }
+
     </style>
 
     <div id="content">
@@ -88,13 +92,14 @@
         @endif
 
         <div id="dataproject">
+            @if(count($tmpsupport) == 0)
+                <div class="text-center">
+                    <img src="{{ asset('assets/img/oops.png') }}" alt="" width="300">
+                    <h4>Belum ada Project</h4>
+                </div>
+            @else
             @foreach ($tmpsupport as $tmp)
-                @if ($tmp->tek_support == null)
-                    <div class="text-center">
-                        <img src="{{ asset('assets/img/oops.png') }}" alt="" width="300">
-                        <h4>Belum ada Masalah Project</h4>
-                    </div>
-                @else
+                @if ($tmp->tek_support != null)
                     <a href="javascript:void(0)" style="position:relative; top:10px; margin-bottom:50px;" class="btn btn-info ml-3" id="create-new-masalah">Tambah Masalah <b class="mdi mdi-bookmark-plus"></b></a>
 
                     <div class=" container-fluid">
@@ -122,6 +127,7 @@
                     </div>
                 @endif
             @endforeach
+            @endif
         </div>
 
     </div>
@@ -209,10 +215,10 @@
                     <div class="alert alert-danger alert-response4"></div>
 
                     <!-- pilih_project -->
-                    <div class="form-group">
-                        <label class="col-form-label" for="project_id2">Pilih project</label> <br>
-                        <input required name="project_id2" id="project_id2" disabled class="form-control">
-                    </div>
+                    {{-- <div class="form-group">
+                        <label class="col-form-label" for="project_id2">Nama project</label> <br>
+                        <input required name="project_id2" id="project_id2" class="form-control">
+                    </div> --}}
                     {{-- end pilih_project --}}
 
                     <!-- masalah -->
@@ -286,6 +292,76 @@
     var appurl = "{{env('APP_URL')}}";
     console.log(apiurl);
     console.log("{{Session::get('id')}}");
+
+    // global function
+        function clickDetail(idd){
+            $('body').one('click', '.btn-detail-masalah'+idd, function () {
+                var user_id = $(".btn-detail-masalah"+idd).val();
+                console.log(user_id);
+                $.get("kelolaMasalah/" + user_id ,  function (data) {
+                    $('#userCruddetailModal').html("Detail Masalah");
+                    $('#ajax-cruddetail-modal').modal('show');
+                    $('#isi_masalahdetail').html(data.masalah);
+                    $('#nama_projectdetail').html(data.project.nama_project);
+                    $('#isi_solusidetail').html(data.solusi);
+                    $("#picturedetailmasalah").attr('src', appurl+'uploads/masalah/' + data.picture);
+                })
+            });
+        }
+
+        function clickEdit(idd){
+            $('body').one('click', '.btn-edit-masalah'+idd, function () {
+                var user_id = $(".btn-edit-masalah"+idd).val();
+                console.log(user_id);
+                $.get("kelolaMasalah/" + user_id ,  function (data) {
+                    $('#userCrudeditModal').html("Edit Masalah");
+                    $('#ajax-crudedit-modal').modal('show');
+                    $('#id_masalah').val(data.id);
+                    $('#isi_masalah').html(data.masalah);
+                    $('#isi_solusi').html(data.solusi);
+                    $('#isi_picturelama').html(data.picture);
+                    $('#view-gambarlama').attr('src', appurl+'uploads/masalah/' + data.picture);
+                })
+            });
+        }
+
+        function clickHapus(idd){
+            $('body').on('click', '.btn-hapus-masalah'+idd, function () {
+                var user_id = $(".btn-hapus-masalah"+idd).val();
+                console.log(user_id);
+                // if(!confirm("Anda serius ingin hapus ? data yang telah dihapus tidak bisa dikembalikan !")){
+                //     return false;
+                // }
+
+                Swal.fire({
+                    title: 'Anda yakin ingin hapus ?',
+                    text: "data yang telah dihapus tidak bisa dikembalikan !",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Hapus!'
+                    }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: "post",
+                            url: apiurl+"admin/hapusdataMasalah/" + user_id,
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                        Swal.fire(
+                        'Deleted!',
+                        'Data sukses dihapus.',
+                        'success'
+                        );
+                    }
+                    })
+            });
+        }
+    // end global function
+
+
     $(document).ready(function () {
 
         // ===================================== GET API MASALAH =========================\\
@@ -295,7 +371,7 @@
                 url: apiurl+"admin/getMasalah/{{Session::get('id')}}",
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response.length);
+                    // console.log(response.length);
 
                     var trHTML = '';
 
@@ -312,23 +388,15 @@
                             + '<td>' + item.project.status + '</td>'
                             + '<td>' + item.created_at + '</td>'
                             + '<td>' + item.updated_at + '</td>'
-                            + '<td> <button value="' + item.id +'" class="btn btn-primary btn-sm btn-detail-masalah btn-detail-masalah'+item.id+'"><span class="mdi mdi-eye"></span></button> </td> </tr>';
-
-                            $('.btn-detail-masalah'+item.id).click(function () {
-                                var user_id = $("button").val();
-                                console.log(user_id);
-                                $.get("kelolaMasalah/" + user_id ,  function (data) {
-                                    $('#userCruddetailModal').html("Detail Masalah");
-                                    $('#ajax-cruddetail-modal').modal('show');
-                                    $('#isi_masalahdetail').html(data.masalah);
-                                    $('#nama_projectdetail').html(data.project.nama_project);
-                                    $('#isi_solusidetail').html(data.solusi);
-                                    $("#picturedetailmasalah").attr('src', appurl+'uploads/masalah/' + data.picture);
-                                })
-                            });
+                            + '<td> <button onClick="clickDetail('+item.id+')" value="'+item.id+'" class="btn btn-action btn-primary btn-sm btn-detail-masalah btn-detail-masalah'+item.id+'"><span class="mdi mdi-eye"></span></button>'
+                            + '<button onClick="clickEdit('+item.id+')" value="'+item.id+'" class="btn btn-action btn-success btn-sm btn-edit-masalah btn-edit-masalah'+item.id+'"><span class="mdi mdi-pencil"></span></button>'
+                            + '<button onClick="clickHapus('+item.id+')" value="'+item.id+'" class="btn btn-action btn-danger btn-sm btn-hapus-masalah btn-hapus-masalah'+item.id+'"><span class="mdi mdi-eraser"></span></button>'
+                            +'</td>'
+                            +'</tr>';
 
                     });
                     $('#getmasalah').html(trHTML);
+
                 }
             });
 
@@ -341,28 +409,34 @@
                     dataType: 'json',
                     success: function (response) {
                         console.log(response);
-                        // if (response[0].masalah.length == 0) {
-                        //     console.log('null');
-                        // } else{
-                        //     console.log('ada');
-                        // }
-
                         var trHTML = '';
+
+                        if (response.length == 0) {
+                            trHTML += '<tr><td colspan="7">  Belum ada data </td>'
+                            + '</tr>';
+                        }
+
                         $.each(response, function (i, item) {
-                                trHTML += '<tr> <td>' + item.id + '</td>'
+                            console.log(response);
+                                trHTML += '<tr><td>' + item.id + '</td>'
                                 + '<td>' + item.project.nama_project + '</td>'
                                 + '<td>' + item.masalah + '</td>'
                                 + '<td>' + item.project.status + '</td>'
                                 + '<td>' + item.created_at + '</td>'
                                 + '<td>' + item.updated_at + '</td>'
-                                + '<td> <button value="' + item.id +'" class="btn btn-primary btn-sm btn-detail-masalah"><span class="mdi mdi-eye"></span></button> </td> </tr>';
+                                + '<td> <button onClick="clickDetail('+item.id+')" value="'+item.id+'" class="btn btn-action btn-primary btn-sm btn-detail-masalah btn-detail-masalah'+item.id+'"><span class="mdi mdi-eye"></span></button>'
+                                + '<button onClick="clickEdit('+item.id+')" value="'+item.id+'" class="btn btn-action btn-success btn-sm btn-edit-masalah btn-edit-masalah'+item.id+'"><span class="mdi mdi-pencil"></span></button>'
+                                + '<button onClick="clickHapus('+item.id+')" value="'+item.id+'" class="btn btn-action btn-danger btn-sm btn-hapus-masalah btn-hapus-masalah'+item.id+'"><span class="mdi mdi-eraser"></span></button>'
+                                +'</td>'
+                                +'</tr>';
+
                         });
                         $('#getmasalah').html(trHTML);
                     }
                 });
             })
         //===================================== END GET MASALAH ==========================\\
-
+        //
         // ==================================== TAMBAH MASALAH ============================\\
             // get project_id tambah masalah
             $("#create-new-masalah").one('click', function () {
@@ -434,11 +508,62 @@
                 });
             // end tambah data
 
-        // ==================================== END TAMBAH MASALAH ============================\\
+        // ==================================== END TAMBAH MASALAH ========================\\
+        //
+        // ==================================== EDIT MASALAH ===============================\\
+            $('body').unbind('click', '.edit-user', function () {
+                var user_id = $(this).data('id');
+                $.get('kelolaMasalah/' + user_id + '/edit', function (data) {
+                    $('#name-error').hide();
+                    $('#email-error').hide();
+                    $('#userCrudeditModal').html("Edit Project");
+                    $('#btn-save2').val("edit-user");
+                    $('#ajax-crudedit-modal').modal({ backdrop: 'static' }, 'show');
+                    $('#id_masalah').val(data.id);
+                    $('#project_id2').val(data.project_id);
+                    $('#isi_masalah').val(data.masalah);
+                    $('#isi_solusi').val(data.solusi);
+                    $("#isi_picturelama").val(data.picture);
+                    $("#view-gambarlama").attr('src', appurl+'uploads/masalah/' + data.picture);
+                    $("#isi_picturebaru").val();
+                })
+            });
 
-        //   cek email
+            // update masalah
+            $("#userForm2").unbind('submit').submit(function (e) {
+                e.preventDefault();
+                // var project_id = $("#project_id").val();
+                $.ajax({
+                    type: "post",
+                    url: apiurl+"admin/updatedataMasalah",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                        if (response.data.statuscode == 2001) {
+                            // $(".alert-response3").css('display', 'block');
+                            // $(".alert-response3").html(response.data.message);
+                            $('#ajax-crudedit-modal').modal('hide');
+                            Swal.fire( 'Sukses', 'Masalah sukses diupdate', 'success');
+                        } else {
+                            // $(".alert-response4").css('display', 'block');
+                            // $(".alert-response4").html(response.data.message);
+                        }
+                    }
+                });
+
+            });
+        // ==================================== END EDIT MASALAH ===========================\\
+        //
+        // ==================================== DELETE MASALAH ==============================\\
+        //
+        // ================================== END DELETE MASALAH =============================\\
+
+        // cek email
         $("#name").bind("keyup change", function () {
-
             var nama_project = $(this).val();
 
             $.ajax({
@@ -460,94 +585,6 @@
                         $("#name").css('borderColor', 'green');
                         $("#btn-save").css('display', 'block');
                     }
-                }
-            });
-
-        });
-
-        // detail masalah detail-masalah
-        $('body').on('click', '.btn-detail-masalah', function () {
-            var user_id = $(".btn-detail-masalah").val();
-            var btn_detail = $(".btn-detail-masalah"+user_id).val();
-            console.log(btn_detail);
-            $.get("kelolaMasalah/" + user_id ,  function (data) {
-                $('#userCruddetailModal').html("Detail Masalah");
-                $('#ajax-cruddetail-modal').modal('show');
-                $('#isi_masalahdetail').html(data.masalah);
-                $('#nama_projectdetail').html(data.project.nama_project);
-                $('#isi_solusidetail').html(data.solusi);
-                $("#picturedetailmasalah").attr('src', appurl+'uploads/masalah/' + data.picture);
-            })
-        });
-
-        /* When click edit user */
-        $('body').unbind('click', '.edit-user', function () {
-            var user_id = $(this).data('id');
-            $.get('kelolaMasalah/' + user_id + '/edit', function (data) {
-                $('#name-error').hide();
-                $('#email-error').hide();
-                $('#userCrudeditModal').html("Edit Project");
-                $('#btn-save2').val("edit-user");
-                $('#ajax-crudedit-modal').modal({ backdrop: 'static' }, 'show');
-                $('#id_masalah').val(data.id);
-                $('#project_id2').val(data.project_id);
-                $('#isi_masalah').val(data.masalah);
-                $('#isi_solusi').val(data.solusi);
-                $("#isi_picturelama").val(data.picture);
-                $("#isi_picturebaru").val();
-                $("#view-gambarlama").attr('src', appurl+'uploads/masalah/' + data.picture);
-            })
-        });
-
-        $('body').on('click', '#delete-user', function () {
-
-            var user_id = $(this).data("id");
-            if(!confirm("Anda serius ingin hapus ? data yang telah dihapus tidak bisa dikembalikan !")){
-                return false;
-            }
-
-            $.ajax({
-                type: "get",
-                url: apiurl+"admin/hapusdataMasalah/" + user_id,
-                success: function (data) {
-                    console.log(data);
-                    var oTable = $('#user-table').dataTable();
-                    oTable.fnDraw(false);
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
-        });
-
-        // update masalah
-        $("#userForm2").unbind('submit').submit(function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                type: "post",
-                url: apiurl+"admin/updatedataMasalah",
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-                cache: false,
-                dataType: "json",
-                success: function (response) {
-                    console.log(response);
-                    if (response) {
-                        $(".alert-response3").css('display', 'block');
-                        $(".alert-response3").html(response.data.message);
-                    } else {
-                        $(".alert-response4").css('display', 'block');
-                        $(".alert-response4").html(response.data.message);
-                    }
-                },
-                complete: function () {
-                    setTimeout(function () {
-                        $('#ajax-crud-modal').modal('hide');
-                        var oTable = $('#user-table').dataTable();
-                        oTable.fnDraw(false);
-                    }, 2000);
                 }
             });
 

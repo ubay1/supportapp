@@ -70,28 +70,31 @@
         </div>
         @endif
 
+        {{-- {{count($tmpsupport)}} --}}
         <div id="dataproject">
+            @if(count($tmpsupport) == 0)
+                <div class="text-center">
+                    <img src="{{ asset('assets/img/oops.png') }}" alt="" width="300">
+                    <h4>Belum ada Project</h4>
+                </div>
+            @else
             @foreach ($tmpsupport as $tmp)
-                @if ($tmp->tek_support == null)
-                    <div class="text-center">
-                        <img src="{{ asset('assets/img/oops.png') }}" alt="" width="300">
-                        <h4>Belum ada Project</h4>
-                    </div>
-                @else
-                <div class="card" style="width: 18rem; margin:auto;">
-                    <div class="text-center">
-                        <div class="card-body">
-                            <h2 class="card-title title-teknikalproject">{{$tmp->nama_project}}</h2>
-                            @if ($tmp->status == 'idle')
-                                <img src="{{ asset('assets/img/on.png') }}" class="img-on" alt="" width="100">
-                            @else
-                                <img src="{{ asset('assets/img/off.png') }}" class="img-on" alt="" width="100">
-                            @endif
+                @if ($tmp->tek_support != null)
+                    <div class="card" style="width: 18rem; margin:auto;">
+                        <div class="text-center">
+                            <div class="card-body">
+                                <h2 class="card-title title-teknikalproject">{{$tmp->nama_project}}</h2>
+                                @if ($tmp->status == 'idle')
+                                    <img src="{{ asset('assets/img/on.png') }}" class="img-on" alt="" width="100">
+                                @else
+                                    <img src="{{ asset('assets/img/off.png') }}" class="img-on" alt="" width="100">
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endif
             @endforeach
+            @endif
         </div>
 
         <div id="tesapi"></div>

@@ -278,21 +278,36 @@
         $('body').on('click', '#delete-user', function () {
 
             var user_id = $(this).data("id");
-            if(!confirm("Anda serius ingin hapus ? data yang telah dihapus tidak bisa dikembalikan !")){
-                return false;
-            }
+            Swal.fire({
+                    title: 'Anda yakin ingin menyelesaikan ?',
+                    text: "data tidak bisa dikembalikan !",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Hapus!'
+                    }).then((result) => {
+                    if (result.value) {
+                        Swal.fire(
+                            'Finished!',
+                            'Project telah selesai.',
+                            'success'
+                        );
+                        $.ajax({
+                            type: "get",
+                            url: apiurl+"admin/hapusdataProject/" + user_id,
+                            success: function (data) {
+                                var oTable = $('#user-table').dataTable();
+                                oTable.fnDraw(false);
+                            },
+                            error: function (data) {
+                                console.log('Error:', data);
+                            }
+                        });
+                    }
+                    })
 
-            $.ajax({
-                type: "get",
-                url: apiurl+"admin/hapusdataProject/" + user_id,
-                success: function (data) {
-                    var oTable = $('#user-table').dataTable();
-                    oTable.fnDraw(false);
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
+
         });
     });
 

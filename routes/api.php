@@ -61,6 +61,6 @@ Route::prefix('admin')->group(function(){
     // api masalah
     Route::post('tambahMasalah', 'MasalahController@store');
     Route::post('updatedataMasalah', 'MasalahController@updatedata');
-    Route::get('hapusdataMasalah/{id}', 'MasalahController@hapusMasalah');
+    Route::post('hapusdataMasalah/{id}', 'MasalahController@hapusMasalah');
     Route::get('getMasalah/{id}', 'MasalahController@getMasalah');
 });

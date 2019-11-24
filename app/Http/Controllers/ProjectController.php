@@ -121,9 +121,19 @@ class ProjectController extends Controller
 
     public function destroy($id)
     {
-        $data = Project::where('id', $id)->delete();
+        $data = Project::where('id', $id)->first();
+        $data->status = 'selesai';
+        $data->save();
 
-        return response()->json($data, 200);
+        $data2 = TeknikalSupport::where('id',$data->tek_support_id)->first();
+        $data2->status = 'none';
+        $data2->save();
+
+        return response()->json([
+            'message'=>'project telah selesai',
+            'success'=>true,
+            'statuscode'=>200
+        ]);
     }
 
     public function ceknamaproject(Request $request){
