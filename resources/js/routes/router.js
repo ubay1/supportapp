@@ -1,25 +1,42 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
 
-Vue.use(VueRouter);
+import Login from "../page/Login";
+import Home from "../page/Home";
+import About from "../page/About";
+import guest from './middleware/guest'
+import auth from './middleware/auth'
 
-import Home from "../components/Home";
-import About from "../components/About";
 
-const router = new VueRouter({
-    mode: 'history',
-    routes : [
+const routes = [
+        {
+            path: '/login',
+            name: 'login',
+            component: Login,
+            meta: {
+                middleware: [
+                    guest
+                ]
+            }
+        },
         {
             path: '/',
             name: 'home',
-            component: Home
+            component: Home,
+            meta: {
+                middleware: [
+                    auth
+                ]
+            }
         },
         {
             path: '/about',
             name: 'about',
-            component:About
+            component:About,
+            meta: {
+                middleware: [
+                    auth
+                ]
+            }
         }
-    ]
-});
+];
 
-export default router;
+export default routes;

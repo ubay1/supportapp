@@ -80,10 +80,10 @@ class UserController extends Controller
             // return $superadmin;
 
             if (!$superadmin) {
-                return redirect('admin/login')->with('alert','Role yang and pilih tidak sesuai !');
+                return redirect('admin/login')->with('alert','User tidak terdaftar !');
                 // return response()->json([
                 //     'data'=>[
-                //         'messsage'=>'Role yang and pilih tidak sesuai !',
+                //         'messsage'=>'User tidak terdaftar !',
                 //         'success'=>false,
                 //         'statuscode'=>4003
                 //     ]
@@ -131,17 +131,17 @@ class UserController extends Controller
                 }
             }
         }
-        else{
+        elseif($request->input('role') == 2){
             $email = $request->input('email');
             $password = $request->input('password');
 
             $admin = TeknikalSupport::where('email','=',$email)->first();
 
             if (!$admin) {
-                return redirect('admin/login')->with('alert','Role yang and pilih tidak sesuai !');
+                return redirect('admin/login')->with('alert','User tidak terdaftar !');
                 // return response()->json([
                 //     'data'=>[
-                //         'messsage'=>'Role yang and pilih tidak sesuai !',
+                //         'messsage'=>'User tidak terdaftar !',
                 //         'success'=>false,
                 //         'statuscode'=>4003
                 //     ]
@@ -162,6 +162,7 @@ class UserController extends Controller
                         Session::put('id',$admin->id);
                         Session::put('nama',$admin->nama);
                         Session::put('email',$admin->email);
+                        Session::put('jabatan','teknikal support');
                         Session::put('login',TRUE);
                         return redirect('admin');
                         // return response()->json([
@@ -183,6 +184,9 @@ class UserController extends Controller
                     // ]);
                 }
             }
+        }
+        else{
+            return redirect('admin/login')->with('alert','Role belum dipilih!');
         }
     }
 

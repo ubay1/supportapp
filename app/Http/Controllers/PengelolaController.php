@@ -75,24 +75,25 @@ class PengelolaController extends Controller
             $email = $request->input('email');
             $password = $request->input('password');
 
-            $superadmin = SuperAdmin::all()->where('email','=',$email);
-            return $superadmin;
+            $superadmin = SuperAdmin::where('email','=',$email)->first();
+            // return $superadmin;
 
-            if (!$superadmin[1]) {
-                return redirect('admin/login')->with('alert','Role yang and pilih tidak sesuai !');
+            if (!$superadmin) {
+            // if (!$superadmin[1]) {
+                return redirect('admin/login')->with('alert','User tidak terdaftar !');
                 // return response()->json([
                 //     'data'=>[
-                //         'messsage'=>'Role yang and pilih tidak sesuai !',
+                //         'message'=>'User tidak tersedia !',
                 //         'success'=>false,
                 //         'statuscode'=>4003
                 //     ]
                 // ]);
             }
             else{
-                if ($email == $superadmin[1]->email) {
+                if ($email == $superadmin->email) {
                     // return $superadmin[1]->email;
 
-                    if ($password != $superadmin[1]->password) {
+                    if ($password != $superadmin->password) {
                         return redirect('admin/login')->with('alert','password yang and masukan tidak sesuai !');
                         // return response()->json([
                         //     'data'=>[
@@ -102,9 +103,9 @@ class PengelolaController extends Controller
                         //     ]
                         // ]);
                     }else{
-                        Session::put('id',$superadmin[1]->id);
-                        Session::put('nama',$superadmin[1]->nama);
-                        Session::put('email',$superadmin[1]->email);
+                        Session::put('id',$superadmin->id);
+                        Session::put('nama',$superadmin->nama);
+                        Session::put('email',$superadmin->email);
                         Session::put('jabatan','superadmin');
                         Session::put('login',TRUE);
                         return redirect('admin');
@@ -113,13 +114,13 @@ class PengelolaController extends Controller
                         //         'success' => true,
                         //         'statuscode' => 2001,
                         //         'message' => 'Selamat anda berhasil masuk',
-                        //         $getid
+                        //         // $getid
                         //     ]
                         // ]);
                     }
                 }else{
 
-                    return redirect('admin/login')->with('alert','email yang anda masukan tidak terdaftar !');
+                    // return redirect('admin/login')->with('alert','email yang anda masukan tidak terdaftar !');
                     // return response()->json([
                     //     'data'=>[
                     //         'messsage'=>'email yang anda masukan tidak terdaftar',
@@ -134,10 +135,10 @@ class PengelolaController extends Controller
             $email = $request->input('email');
             $password = $request->input('password');
 
-            $admin = Admin::all()->where('email','=',$email);
+            $admin = TeknikalSupport::where('email','=',$email)->first();
 
             if (!$admin) {
-                return redirect('admin/login')->with('alert','Role yang and pilih tidak sesuai !');
+                return redirect('admin/login')->with('alert','User tidak terdaftar !');
                 // return response()->json([
                 //     'data'=>[
                 //         'messsage'=>'Role yang and pilih tidak sesuai !',
@@ -149,37 +150,38 @@ class PengelolaController extends Controller
             else{
                 if ($email == $admin->email) {
                     if ($password != $admin->password) {
-                    // return redirect('login')->with('alert','password yang and masukan tidak sesuai !');
-                        return response()->json([
-                            'data'=>[
-                                'success' => false,
-                                'statuscode' => 4002,
-                                'message' => 'Password yang anda masukan salah'
-                            ]
-                        ]);
+                    return redirect('login')->with('alert','password yang and masukan tidak sesuai !');
+                        // return response()->json([
+                        //     'data'=>[
+                        //         'success' => false,
+                        //         'statuscode' => 4002,
+                        //         'message' => 'Password yang anda masukan salah'
+                        //     ]
+                        // ]);
                     }else{
                         Session::put('id',$admin->id);
                         Session::put('nama',$admin->nama);
                         Session::put('email',$admin->email);
                         Session::put('jabatan','admin');
                         Session::put('login',TRUE);
-                        return response()->json([
-                            'data'=>[
-                                'success' => true,
-                                'statuscode' => 2001,
-                                'message' => 'Selamat anda berhasil masuk',
-                            ]
-                        ]);
+                        return redirect('admin');
+                        // return response()->json([
+                        //     'data'=>[
+                        //         'success' => true,
+                        //         'statuscode' => 2001,
+                        //         'message' => 'Selamat anda berhasil masuk',
+                        //     ]
+                        // ]);
                     }
                 }else{
                     // return redirect('login')->with('alert','email yang and masukan tidak terdaftar !');
-                    return response()->json([
-                        'data'=>[
-                            'messsage'=>'email yang anda masukan tidak terdaftar',
-                            'success'=>false,
-                            'statuscode'=>4001
-                        ]
-                    ]);
+                    // return response()->json([
+                    //     'data'=>[
+                    //         'messsage'=>'email yang anda masukan tidak terdaftar',
+                    //         'success'=>false,
+                    //         'statuscode'=>4001
+                    //     ]
+                    // ]);
                 }
             }
         }

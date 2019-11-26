@@ -32,7 +32,7 @@
             </div>
             <div class="form-group">
                 <label for="role">Role</label>
-                <select name="role" id="role" class="form-control">
+                <select name="role" id="role" class="form-control" required>
                     <option selected>Pilih Role</option>
                     <option value="1">Super Admin</option>
                     <option value="2">Teknikal Support</option>
@@ -54,7 +54,7 @@
 
     //     $.ajax({
     //         type: "post",
-    //         url: "http://127.0.0.1:8000/api/login",
+    //         url: "http://127.0.0.1:8000/api/admin/loginpost",
     //         data: $(this).serialize(),
     //         dataType: "json",
     //         success: function (response) {
@@ -66,12 +66,27 @@
     //                         text: response.data.message,
     //                     }).then( (result) =>{
     //                         if(result){
-    //                             window.location.href = "{{URL::to('/')}}"
+    //                             window.location.href = "{{URL::to('/admin')}}"
     //                         }
     //                     })
     //                     break;
     //                 case 4001:
-    //                     alert('login gagal')
+    //                     Swal.fire({
+    //                         type: 'error',
+    //                         text: response.data.message,
+    //                     })
+    //                     break;
+    //                 case 4002:
+    //                     Swal.fire({
+    //                         type: 'error',
+    //                         text: response.data.message,
+    //                     })
+    //                     break;
+    //                 case 4003:
+    //                     Swal.fire({
+    //                         type: 'error',
+    //                         text: response.data.message,
+    //                     })
     //                     break;
     //                 default:
     //                     break;
@@ -79,7 +94,6 @@
     //         }
     //     });
     // });
-
 </script>
 
 <!-- /.main-section -->

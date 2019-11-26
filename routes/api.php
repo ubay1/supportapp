@@ -25,8 +25,8 @@ Route::prefix('admin')->group(function(){
     // user authentication
     // Route::get('/', 'PengelolaController@index');
     // Route::get('login', 'PengelolaController@login');
-    Route::post('loginpost', 'PengelolaController@loginpost');
-    Route::get('logout', 'PengelolaController@logout');
+    // Route::post('loginpost', 'PengelolaController@loginpost');
+    // Route::get('logout', 'PengelolaController@logout');
 
     // cek email admin
     Route::post('cekEmail', 'AdminController@cekemail');

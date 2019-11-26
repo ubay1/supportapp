@@ -2,34 +2,35 @@
 
 
 // user authentication
-Route::get('admin', 'UserController@index');
-Route::get('admin/login', 'UserController@login');
-Route::post('admin/loginPost', 'UserController@loginPost');
-Route::get('admin/logout', 'UserController@logout');
-//end user authentication
+Route::prefix('admin')->group(function(){
+    Route::get('/', 'UserController@index');
+    Route::get('/login', 'UserController@login');
+    Route::post('/loginPost', 'UserController@loginPost');
+    Route::get('/logout', 'UserController@logout');
+    //end user authentication
 
-// kelola admin
-Route::resource('admin/kelolaTS', 'AdminController');
-// kelola teknisi
-Route::resource('admin/kelolaTeknisi', 'TeknisiController');
-// kelola Project
-Route::resource('admin/kelolaProject', 'ProjectController');
+    // kelola admin
+    Route::resource('/kelolaTS', 'AdminController');
+    // kelola teknisi
+    Route::resource('/kelolaTeknisi', 'TeknisiController');
+    // kelola Project
+    Route::resource('/kelolaProject', 'ProjectController');
 
-// kelola Project
-Route::get('admin/teknikalProject', 'ProjectController@teknikalProject');
+    // kelola Project
+    Route::get('/teknikalProject', 'ProjectController@teknikalProject');
 
-// kelola MasalahProject
-Route::resource('admin/kelolaMasalah', 'MasalahController');
+    // kelola MasalahProject
+    Route::resource('/kelolaMasalah', 'MasalahController');
 
-Route::get('admin/getTS', 'ProjectController@getTS');
-// end kelola Project
+    Route::get('/getTS', 'ProjectController@getTS');
+    // end kelola Project
+
+});
+// Route::get('/kelola/{any}', 'SinglePageController@index')->where('any', '.*');
 
 
-// Route::get('/kelolaAdmin/{any}', 'SinglePageController@index')->where('any', '.*');
-
-
-// Route::get('/{any}', function () {
-//     return view('Vueadmin');
-// })->where('any','.*');
+Route::get('/{any}', function () {
+    return view('layouts/app');
+})->where('any','.*');
 
 // Auth::routes(['register' => false]);
